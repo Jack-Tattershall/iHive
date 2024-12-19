@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iHive</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        #video-container {
+            text-align: center;
+        }
+
+        #video-stream {
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+    <script>
+        function startStream() {
+            fetch("/start_stream", { method: "POST" })
+                .then((response) => {
+                    if (response.ok) {
+                        const container = document.getElementById("video-container");
+                        let img = document.getElementById("video-stream");
+                        if (!img) {
+                            img = document.createElement("img");
+                            img.id = "video-stream";
+                            container.appendChild(img);
+                        }
+                        img.src = "/video_feed";
+                        console.log("Stream started successfully.");
+                    } else {
+                        console.error("Failed to start stream.");
+                    }
+                })
+                .catch((err) => console.error("Error starting stream:", err));
+        }
+
+        function stopStream() {
+            fetch("/stop_stream", { method: "POST" })
+                .then((response) => {
+                    if (response.ok) {
+                        const img = document.getElementById("video-stream");
+                        if (img) {
+                            img.remove();
+                        }
+                        console.log("Stream stopped successfully.");
+                    } else {
+                        console.error("Failed to stop stream.");
+                    }
+                })
+                .catch((err) => console.error("Error stopping stream:", err));
+        }
+    </script>
+</head>
+
+<body>
+    <h1>iHive Main Camera Stream</h1>
+    <div class="button-container">
+        <button onclick="startStream()">Start Stream</button>
+        <button onclick="stopStream()">Stop Stream</button>
+    </div>
+    <div id="video-container"></div>
+</body>
+
+</html>
